@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini AI Chatbot</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --bot-bubble: #ffffff;
+            --user-bubble: #4f46e5;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background: var(--bg-gradient);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 550px;
+            height: 80vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: var(--primary-color);
+            padding: 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-window {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f9fafb;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            max-width: 90%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background: var(--bot-bubble);
+            color: var(--text-main);
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 4px;
+        }
+
+        /* --- STYLING FOR HEADINGS & LISTS --- */
+        .bot-message h4 {
+            margin: 10px 0 5px 0;
+            color: var(--primary-color);
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .bot-message ul {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .bot-message li {
+            margin-bottom: 4px;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: var(--user-bubble);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .typing-container { padding: 10px 20px; display: none; }
+        .chat-input-area { padding: 20px; display: flex; gap: 10px; border-top: 1px solid #eee; }
+        
+        input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            outline: none;
+        }
+
+        .send-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <header class="chat-header">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <i data-lucide="sparkles"></i>
+                <div>
+                    <h2 style="font-size:1.1rem">Gemini Assistant</h2>
+                    <p style="font-size:0.7rem; opacity:0.8">Clean Format Mode</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="chat-window" id="chatWindow">
+            <div class="message bot-message">Hello! I can now provide structured answers with headings and bullet points. Try asking me for a list or a guide!</div>
+        </div>
+
+        <div class="typing-container" id="typingIndicator">
+            <div style="font-size:0.8rem; color:#6b7280; font-style:italic">Gemini is writing...</div>
+        </div>
+
+        <form class="chat-input-area" id="chatForm">
+            <input type="text" id="userInput" placeholder="Ask me anything..." autocomplete="off">
+            <button type="submit" class="send-btn" id="sendBtn"><i data-lucide="send"></i></button>
+        </form>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById('chatWindow');
+        const chatForm = document.getElementById('chatForm');
+        const userInput = document.getElementById('userInput');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        lucide.createIcons();
+
+        /**
+         * Formats the AI response into clean HTML.
+         * 1. Removes all asterisks (*)
+         * 2. Converts lines starting with '-' or numbering into <li> tags
+         * 3. Converts short bold-style lines into <h4> side-headings
+         */
+        function formatAIResponse(text) {
+            // Remove all asterisks first
+            let cleanText = text.replace(/\*/g, '');
+
+            const lines = cleanText.split('\n');
+            let htmlOutput = '';
+            let inList = false;
+
+            lines.forEach(line => {
+                let trimmed = line.trim();
+                if (!trimmed) return;
+
+                // Check if line is a bullet point (starts with - or digit like 1.)
+                if (trimmed.startsWith('- ') || /^\d+\./.test(trimmed)) {
+                    if (!inList) {
+                        htmlOutput += '<ul>';
+                        inList = true;
+                    }
+                    htmlOutput += `<li>${trimmed.replace(/^- |^\d+\. /, '')}</li>`;
+                } else {
+                    if (inList) {
+                        htmlOutput += '</ul>';
+                        inList = false;
+                    }
+
+                    // If the line is short (less than 40 chars), treat it as a side heading
+                    if (trimmed.length < 40 && !trimmed.endsWith('.')) {
+                        htmlOutput += `<h4>${trimmed}</h4>`;
+                    } else {
+                        htmlOutput += `<p>${trimmed}</p>`;
+                    }
+                }
+            });
+
+            if (inList) htmlOutput += '</ul>';
+            return htmlOutput;
+        }
+
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
+            
+            if (sender === 'bot') {
+                messageDiv.innerHTML = formatAIResponse(text);
+            } else {
+                messageDiv.textContent = text;
+            }
+            
+            chatWindow.appendChild(messageDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        async function fetchAIResponse(message) {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            });
+            const data = await response.json();
+            return data.reply;
+        }
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, 'user');
+            userInput.value = "";
+            typingIndicator.style.display = 'block';
+
+            try {
+                const reply = await fetchAIResponse(message);
+                addMessage(reply, 'bot');
+            } catch (error) {
+                addMessage("Error connecting to server.", 'error');
+            } finally {
+                typingIndicator.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
