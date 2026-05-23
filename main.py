@@ -1,6 +1,6 @@
 from google import genai
 from flask import Flask, request,jsonify, render_template
-client= genai.Client(api_key="Gemini API Key")
+client= genai.Client(api_key="AIzaSyDKuRfdS3WGHbOFRb0-d5biyLCzb2CHFN0")
 app=Flask(__name__)
 @app.route("/")
 def index():
