@@ -79,10 +79,11 @@ After activation, you will see:
 
 in the terminal.
 
-4️⃣ Install Dependencies
+4️⃣ Install required libraries
 
 
-pip install -r requirements.txt
+pip install flask google-genai
+
 
 5️⃣ Run the Application
 
