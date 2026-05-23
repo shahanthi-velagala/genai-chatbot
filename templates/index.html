@@ -6,11 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>AI Assistant</title>
 
+    <!-- ICONS -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
+    <!-- MARKDOWN -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- FONT -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+
         *{
             margin:0;
             padding:0;
@@ -20,9 +26,11 @@
 
         body{
             height:100vh;
+
             background:
             radial-gradient(circle at top left,#1e1b4b,#0f172a 45%),
             radial-gradient(circle at bottom right,#312e81,#020617 50%);
+
             display:flex;
             justify-content:center;
             align-items:center;
@@ -31,16 +39,24 @@
         }
 
         .chat-container{
+
             width:100%;
             max-width:950px;
             height:92vh;
+
             backdrop-filter:blur(18px);
+
             background:rgba(15,23,42,0.72);
+
             border:1px solid rgba(255,255,255,0.08);
+
             border-radius:28px;
+
             overflow:hidden;
+
             display:flex;
             flex-direction:column;
+
             box-shadow:
             0 10px 40px rgba(0,0,0,0.4),
             inset 0 0 0 1px rgba(255,255,255,0.04);
@@ -49,12 +65,17 @@
         /* HEADER */
 
         .chat-header{
+
             height:85px;
+
             padding:20px 28px;
+
             border-bottom:1px solid rgba(255,255,255,0.06);
+
             display:flex;
             justify-content:space-between;
             align-items:center;
+
             background:rgba(255,255,255,0.02);
         }
 
@@ -65,14 +86,20 @@
         }
 
         .logo{
+
             width:50px;
             height:50px;
+
             border-radius:16px;
+
             background:linear-gradient(135deg,#8b5cf6,#2563eb);
+
             display:flex;
             justify-content:center;
             align-items:center;
+
             color:white;
+
             box-shadow:0 0 25px rgba(139,92,246,0.5);
         }
 
@@ -165,23 +192,35 @@
         }
 
         .message{
+
             padding:16px 18px;
+
             border-radius:20px;
-            line-height:1.7;
-            font-size:0.95rem;
+
+            line-height:1.8;
+
+            font-size:0.96rem;
+
             word-wrap:break-word;
         }
 
         .bot-message{
+
             background:#1e293b;
+
             color:#f8fafc;
+
             border-bottom-left-radius:5px;
+
             border:1px solid rgba(255,255,255,0.04);
         }
 
         .user-message{
+
             background:linear-gradient(135deg,#2563eb,#7c3aed);
+
             color:white;
+
             border-bottom-right-radius:5px;
         }
 
@@ -191,26 +230,107 @@
             padding-left:5px;
         }
 
-        /* BOT CONTENT */
+        /* CHATGPT STYLE MARKDOWN */
+
+        .bot-message h1{
+            font-size:1.8rem;
+            margin-top:10px;
+            margin-bottom:18px;
+            color:#ffffff;
+            font-weight:700;
+        }
+
+        .bot-message h2{
+            font-size:1.45rem;
+            margin-top:20px;
+            margin-bottom:14px;
+            color:#c4b5fd;
+            font-weight:700;
+        }
+
+        .bot-message h3{
+            font-size:1.2rem;
+            margin-top:18px;
+            margin-bottom:12px;
+            color:#ddd6fe;
+            font-weight:600;
+        }
 
         .bot-message h4{
-            color:#a78bfa;
-            margin-bottom:8px;
-            margin-top:10px;
             font-size:1rem;
+            margin-top:15px;
+            margin-bottom:10px;
+            color:#e9d5ff;
+            font-weight:600;
         }
 
         .bot-message p{
-            margin-bottom:10px;
+            margin-bottom:14px;
+            line-height:1.9;
+            color:#e2e8f0;
         }
 
-        .bot-message ul{
-            margin-left:18px;
-            margin-bottom:10px;
+        .bot-message ul,
+        .bot-message ol{
+            margin-left:24px;
+            margin-top:12px;
+            margin-bottom:18px;
         }
 
         .bot-message li{
-            margin-bottom:5px;
+            margin-bottom:10px;
+            line-height:1.8;
+            color:#e2e8f0;
+        }
+
+        .bot-message strong{
+            color:#ffffff;
+            font-weight:700;
+        }
+
+        .bot-message em{
+            color:#cbd5e1;
+            font-style:italic;
+        }
+
+        .bot-message code{
+            background:#0f172a;
+            color:#93c5fd;
+            padding:3px 7px;
+            border-radius:6px;
+            font-size:0.9rem;
+        }
+
+        .bot-message pre{
+            background:#020617;
+            padding:18px;
+            border-radius:14px;
+            overflow-x:auto;
+            margin-top:15px;
+            margin-bottom:18px;
+            border:1px solid rgba(255,255,255,0.05);
+        }
+
+        .bot-message pre code{
+            background:none;
+            padding:0;
+            color:#e2e8f0;
+        }
+
+        .bot-message blockquote{
+            border-left:4px solid #8b5cf6;
+            padding-left:15px;
+            margin:15px 0;
+            color:#cbd5e1;
+        }
+
+        .bot-message a{
+            color:#93c5fd;
+            text-decoration:none;
+        }
+
+        .bot-message a:hover{
+            text-decoration:underline;
         }
 
         /* INPUT */
@@ -222,12 +342,17 @@
         }
 
         .input-container{
+
             display:flex;
             align-items:center;
             gap:14px;
+
             background:#0f172a;
+
             border:1px solid rgba(255,255,255,0.08);
+
             padding:12px;
+
             border-radius:20px;
         }
 
@@ -237,13 +362,18 @@
         }
 
         #userInput{
+
             flex:1;
+
             background:transparent;
+
             border:none;
+
             outline:none;
+
             color:white;
+
             font-size:0.95rem;
-            resize:none;
         }
 
         #userInput::placeholder{
@@ -251,16 +381,24 @@
         }
 
         .send-btn{
+
             width:48px;
             height:48px;
+
             border:none;
+
             border-radius:15px;
+
             background:linear-gradient(135deg,#2563eb,#8b5cf6);
+
             color:white;
+
             cursor:pointer;
+
             display:flex;
             justify-content:center;
             align-items:center;
+
             transition:0.3s;
         }
 
@@ -300,8 +438,6 @@
         .dots span:nth-child(3){
             animation-delay:0.4s;
         }
-
-        /* ANIMATION */
 
         @keyframes bounce{
             0%,80%,100%{
@@ -346,7 +482,9 @@
                 padding:18px;
             }
         }
+
     </style>
+
 </head>
 
 <body>
@@ -390,12 +528,16 @@
             <div class="message-content">
 
                 <div class="message bot-message">
-                    <h4>Hello 👋</h4>
+
+                    <h2>Hello 👋</h2>
+
                     <p>
-                        I’m your AI assistant powered by Gemini.
-                        Ask me anything — coding, projects, DSA,
-                        placements, web development, or AI.
+                        I’m your AI assistant powered by Gemini AI.
+                        Ask me anything about coding, projects,
+                        DSA, web development, placements, AI,
+                        or technology.
                     </p>
+
                 </div>
 
                 <div class="timestamp">
@@ -455,58 +597,27 @@
     const typingIndicator = document.getElementById('typingIndicator');
 
     function getTime() {
+
         return new Date().toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit'
+            hour:'2-digit',
+            minute:'2-digit'
         });
     }
 
-    function formatAIResponse(text) {
+    // CHATGPT STYLE RESPONSE FORMATTER
 
-        let cleanText = text.replace(/\*/g,'');
+    function formatAIResponse(text){
 
-        const lines = cleanText.split('\n');
-
-        let html = '';
-        let inList = false;
-
-        lines.forEach(line => {
-
-            const trimmed = line.trim();
-
-            if(!trimmed) return;
-
-            if(trimmed.startsWith('- ') || /^\d+\./.test(trimmed)) {
-
-                if(!inList){
-                    html += '<ul>';
-                    inList = true;
-                }
-
-                html += `<li>${trimmed.replace(/^- |^\d+\. /,'')}</li>`;
-
-            } else {
-
-                if(inList){
-                    html += '</ul>';
-                    inList = false;
-                }
-
-                if(trimmed.length < 45 && !trimmed.endsWith('.')){
-                    html += `<h4>${trimmed}</h4>`;
-                } else {
-                    html += `<p>${trimmed}</p>`;
-                }
-            }
-
+        marked.setOptions({
+            breaks:true
         });
 
-        if(inList) html += '</ul>';
-
-        return html;
+        return marked.parse(text);
     }
 
-    function createMessage(text, sender){
+    // CREATE MESSAGE
+
+    function createMessage(text,sender){
 
         const wrapper = document.createElement('div');
 
@@ -532,6 +643,7 @@
             : 'bot-message';
 
         wrapper.innerHTML = `
+
             ${sender !== 'user' ? `
             <div class="avatar ${avatarClass}">
                 <i data-lucide="${icon}"></i>
@@ -541,11 +653,13 @@
             <div class="message-content">
 
                 <div class="message ${messageClass}">
+
                     ${
                         sender === 'bot'
                         ? formatAIResponse(text)
                         : text
                     }
+
                 </div>
 
                 <div class="timestamp">
@@ -559,6 +673,7 @@
                 <i data-lucide="${icon}"></i>
             </div>
             ` : ''}
+
         `;
 
         chatWindow.appendChild(wrapper);
@@ -567,6 +682,8 @@
 
         chatWindow.scrollTop = chatWindow.scrollHeight;
     }
+
+    // FETCH AI RESPONSE
 
     async function fetchAIResponse(message){
 
@@ -581,7 +698,6 @@
             body:JSON.stringify({
                 message:message
             })
-
         });
 
         if(!response.ok){
@@ -593,7 +709,9 @@
         return data.reply;
     }
 
-    chatForm.addEventListener('submit', async(e)=>{
+    // SEND MESSAGE
+
+    chatForm.addEventListener('submit',async(e)=>{
 
         e.preventDefault();
 
@@ -617,21 +735,18 @@
         catch(error){
 
             createMessage(
-                '⚠️ Error connecting to server. Please check your Flask backend or API key.',
+                '⚠️ Error connecting to server. Please check your backend or API key.',
                 'bot'
             );
-
         }
         finally{
 
             typingIndicator.style.display = 'none';
-
         }
-
     });
 
 </script>
 
 </body>
 </html>
-```
+
